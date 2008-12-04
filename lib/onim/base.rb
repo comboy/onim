@@ -2,9 +2,10 @@ module Onim
   class Base
     
     def initialize
+      @logger = Logger.new File.join(Onim::PATH,"test.log")
       @engine = Engine.new self
       @gui = Gui.new self
-      #@engine.connect
+      @engine.connect
       @gui.show
     end
     
@@ -19,6 +20,14 @@ module Onim
     
     def send_message(jid,text)
       @engine.send_message jid,text
+    end
+    
+    def item_presence_change(jid,presence,status)
+      @gui.item_presence_change(jid,presence,status)
+    end
+    
+    def debug(text)
+      @logger.info text 
     end
   end
 end 

@@ -1,9 +1,12 @@
-
+require 'rubygems'
 require 'xmpp4r'
 require 'xmpp4r/roster'
 
 module Onim
   class Engine
+    
+    attr_accessor :base
+    
     include Jabber
     #Jabber::debug = true 
     
@@ -23,13 +26,17 @@ module Onim
         
       puts "setting up.."
       cl = Client.new(JID::new('kompotek@jabster.pl'))
+      #cl = Client.new(JID::new('comboy@softwarelab.eu'))
       @client = cl
       puts "connect"
       cl.connect
       puts "auth"
       cl.auth 'bociankowo'
+      #cl.auth 'spoczko'
       puts "done"
-      cl.send(Presence.new.set_type(:available))
+      
+      
+          
       
      #cl.presence_updates do |friend, old_presence, new_presence|
      #  puts "Received presence update from #{friend.to_s}: #{new_presence}"
@@ -42,6 +49,25 @@ module Onim
     
 
     @roster = Roster::Helper.new cl
+              
+    @roster.add_presence_callback do |item,oldpres,pres|
+      pres = Presence.new unless pres
+      oldpres = Presence.new unless oldpres
+
+            
+      base.debug "presence change: #{pres.from} : #{pres.type.inspect} #{pres.status.to_s}"     
+      base.debug "mmmmmmmm #{pres.show} ===== #{pres.priority} <"     
+      pres = oldpres
+      base.debug "OLD presence change: #{pres.from} : #{pres.type.inspect} #{pres.status.to_s}"     
+      base.debug "OLD mmmmmmmm #{pres.show} ===== #{pres.priority} <"     
+            
+      status = pres.status
+      presence = pres.show.to_sym || :available
+      # XXX unavaliable
+      presence = :unavailable if pres.status.to_s == 'unavailable'
+      base.item_presence_change(pres.from,presence,status)
+    end
+          
     mainthread = Thread.current
  
     @roster.add_query_callback { |iq|
@@ -89,6 +115,7 @@ module Onim
       end
       Thread.stop
       #pp @roster.items
+      cl.send(Presence.new.set_type(:available))
 
       rescue Exception => e
         puts e
