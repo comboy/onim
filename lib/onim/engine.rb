@@ -24,16 +24,16 @@ module Onim
         
       begin
         
-      puts "setting up.."
+      debug "setting up.."
       cl = Client.new(JID::new('kompotek@jabster.pl'))
       #cl = Client.new(JID::new('comboy@softwarelab.eu'))
       @client = cl
-      puts "connect"
+      debug "connect"
       cl.connect
-      puts "auth"
+      debug "auth"
       cl.auth 'bociankowo'
       #cl.auth 'spoczko'
-      puts "done"
+      debug "done"
       
       
           
@@ -59,10 +59,10 @@ module Onim
       base.debug "mmmmmmmm #{pres.show} ===== #{pres.priority} <"     
       pres = oldpres
       base.debug "OLD presence change: #{pres.from} : #{pres.type.inspect} #{pres.status.to_s}"     
-      base.debug "OLD mmmmmmmm #{pres.show} ===== #{pres.priority} <"     
+      base.debug "OLD mmmmmmmm #{pres.show} (#{pres.show.class}) ===== #{pres.priority} <"     
             
       status = pres.status
-      presence = pres.show.to_sym || :available
+      presence = pres.show || :available
       # XXX unavaliable
       presence = :unavailable if pres.status.to_s == 'unavailable'
       base.item_presence_change(pres.from,presence,status)
@@ -78,17 +78,18 @@ module Onim
           
           @roster.groups.each { |group|
             if group.nil?
-              puts "*** Ungrouped ***"
+              debug "*** Ungrouped ***"
             else
-              puts "*** #{group} ***"
+              debug "*** #{group.inspect} ***"
             end
             
             @roster.find_by_group(group).each { |item|
-              puts "- #{item.iname} (#{item.jid})"
-              items << {:name => item.iname, :jid => item.jid.to_s}
+              debug "- #{item.iname} (#{item.jid})"
+              #items << {:name => item.iname, :jid => item.jid.to_s}
+              items << Base::Contact.new(item.jid, item.iname, :group => group)
             }
             
-            print "\n"
+            debug "\n"
           }
           
           @base.roster_items = items
@@ -99,18 +100,18 @@ module Onim
       mainthread = Thread.current
       cl.add_message_callback do |m|
         if m.type != :error
-          puts "engine, received"
+          debug "message received from #{m.from} type #{m.type}"
           @base.message_received(m.from.to_s,m.body)
-          puts "engine, done"
-          m2 = Message.new(m.from, "You sent: #{m.body}")
-          m2.type = m.type
-          cl.send(m2)
-          if m.body == 'exit'
-            m2 = Message.new(m.from, "Exiting ...")
-            m2.type = m.type
-            cl.send(m2)
-            mainthread.wakeup
-          end
+#          puts "engine, done"
+#          m2 = Message.new(m.from, "You sent: #{m.body}")
+#          m2.type = m.type
+#          cl.send(m2)
+#          if m.body == 'exit'
+#            m2 = Message.new(m.from, "Exiting ...")
+#            m2.type = m.type
+#            cl.send(m2)
+#            mainthread.wakeup
+#          end
         end
       end
       Thread.stop
@@ -123,5 +124,10 @@ module Onim
       end
       end
     end
+    
+    protected
+      def debug(text)
+        base.debug("Base: #{text}")
+      end
   end
 end

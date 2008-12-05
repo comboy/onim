@@ -60,25 +60,27 @@ module Onim
     end
     
     def contact_click(contact)
-      puts "contact click"
-      pp contact
-      jid = contact[:jid]
-      jid = jid.split('/')[0]
-      window = message_window_for(jid)
+      #puts "contact click"
+      #pp contact
+      #jid = contact[:jid]
+      #jid = jid.split('/')[0]
+      window = message_window_for(contact.jid)
     end
     
     def message_window_for(jid)
       unless @message_windows[jid]
-        @message_windows[jid] = Message.new self, @contacts_data[jid]
+        debug "chhhhh"
+        @message_windows[jid] = Message.new self, @base.roster[jid]
+        debug "oooooo"
       end      
       @message_windows[jid]
     end
     
     def message_received(jid,text)
-      debug "GUI: message received from #{jid}"
-      jid = jid.split('/')[0]
+      debug "message received from #{jid}"
+      #jid = jid.split('/')[0]
       window = message_window_for(jid)
-      pp @contacts_data
+      #pp @contacts_data
       debug "add msg"
       window.add_message(text)
     end
@@ -101,8 +103,8 @@ module Onim
       #items = [{:name => 'ueoau', :jid => 'ueoueo'},{:name => 'ueoa', :jid => 'euooeu'}]
       #pp issues      
       items.each do |item|
-        @contacts_data[item[:jid]] = item
-        status = :unavailable
+        #@contacts_data[item[:jid]] = item
+        status = item.presence
         x = contacts_model.append nil
         x.set_value(0,item)
         image = case status
@@ -111,7 +113,7 @@ module Onim
         else 'user_dnd.gif'
         end
         x.set_value(1,Gdk::Pixbuf.new(Onim::PATH+'gui/images/'+image))
-        x.set_value(2,item[:name])
+        x.set_value(2,item.name)
         x.set_value(3,status)
 #        @contacts.model.insert(nil,@contacts.model.iter_first,[{},'ueoa','euee','aaaa'])
       end
@@ -120,7 +122,7 @@ module Onim
     end
     
     def debug(text)
-      base.debug(text)
+      base.debug("Gui: #{text}")
     end
   end
 end

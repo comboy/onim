@@ -1,8 +1,11 @@
 module Onim
   class Base
     
+    attr_accessor :roster
+    
     def initialize
       @logger = Logger.new File.join(Onim::PATH,"test.log")
+      @roster = Roster.new
       @engine = Engine.new self
       @gui = Gui.new self
       @engine.connect
@@ -10,7 +13,8 @@ module Onim
     end
     
     def roster_items=(items)
-      @gui.set_roster_items items
+      @roster.contacts = items
+      @gui.set_roster_items @roster.contacts
     end
     
     def message_received(jid,text)
