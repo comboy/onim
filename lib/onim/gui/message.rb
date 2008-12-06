@@ -1,16 +1,34 @@
 require 'pango'
 
 module Onim
-  class Gui
+  class Gui  
     class Message
-      
+            
       def initialize(gui,contact)
         @gui = gui
-        @contact = contact
+        debug "Message.new"
+        @contact = contact        
+        create_window
+        @nickname_tag = @talk.buffer.create_tag('nickname', 'weight' => Pango::FontDescription::WEIGHT_BOLD)
+      end
+      
+      def add_message(text,name=nil)
+        debug "add message"
+        @talk.buffer.insert  @talk.buffer.end_iter,"#{name || @contact.name}:  ", @nickname_tag
+        @talk.buffer.insert  @talk.buffer.end_iter, "#{text}\n"
+      end
+      
+      def window
+        @window || create_window
+      end
+      
+      protected
+
+      def create_window
         debug "creating contact windew"
-        debug @contact
         @glade = GladeXML.new(Onim::PATH+'gui/message.glade', nil, 'window_message')      
         @window = @glade['window_message']
+        debug "WINDOW CLASS: #{@window.class}"        
         @window.set_default_size 400,300    
         @window.title = 'Rozmowa z '+ @contact.name
         
@@ -22,16 +40,12 @@ module Onim
             send_message
           end
         end
-        @nickname_tag = @talk.buffer.create_tag('nickname', 'weight' => Pango::FontDescription::WEIGHT_BOLD)
+        @window.signal_connect("destroy") do  |window|
+          debug "message close"
+          @window = nil
+        end        
+        @window
       end
-      
-      def add_message(text,name=nil)
-        debug "add message"
-        @talk.buffer.insert  @talk.buffer.end_iter,"#{name || @contact.name}:  ", @nickname_tag
-        @talk.buffer.insert  @talk.buffer.end_iter, "#{text}\n"
-      end
-      
-      protected
 
       def send_message
         text = @input.buffer.text

@@ -31,6 +31,10 @@ module Onim
       @gui.item_presence_change(jid,presence,status)
     end
     
+    def set_presence(presence,status='')
+      @engine.set_presence(presence,status)
+    end
+        
     def debug(text)
       @logger.info text 
     end

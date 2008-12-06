@@ -19,17 +19,17 @@ module Onim
       end
 
       # Load contacts lists and create columns
-      @contacts = @glade['treeview_contacts']
+      @contacts = @glade['treeview_contacts']      
       %w{Icon Contact}.each_with_index do |name,index| 
         if name == 'Icon'
           renderer = Gtk::CellRendererPixbuf.new          
-          @contacts.append_column(Gtk::TreeViewColumn.new(name, renderer, :pixbuf => index+1, 'background-gdk' => 7))
+          @contacts.append_column(Gtk::TreeViewColumn.new(name, renderer, :pixbuf => index+1, 'background-gdk' => 3))
         else
           renderer = Gtk::CellRendererText.new
-          @contacts.append_column(Gtk::TreeViewColumn.new(name, renderer, :markup => index+1, 'background-gdk' => 7))
+          @contacts.append_column(@bla = Gtk::TreeViewColumn.new(name, renderer, :markup => index+1, 'background-gdk' => 3))
         end
-        #renderer.font = "bold" if index == 5
       end
+      @contacts.expander_column = @bla
       @contacts.signal_connect('row-activated') { 
         |view,path,column| contact_click @contacts.model.get_iter(path)[0]
         
@@ -60,16 +60,13 @@ module Onim
     end
     
     def contact_click(contact)
-      #puts "contact click"
-      #pp contact
-      #jid = contact[:jid]
-      #jid = jid.split('/')[0]
-      window = message_window_for(contact.jid)
+      message_window_for(contact.jid).window
     end
     
     def message_window_for(jid)
       unless @message_windows[jid]
-        debug "chhhhh"
+        debug "creating new message window"
+        debug "jid: #{jid} contact: [#{@base.roster[jid]}]"
         @message_windows[jid] = Message.new self, @base.roster[jid]
         debug "oooooo"
       end      
@@ -78,51 +75,79 @@ module Onim
     
     def message_received(jid,text)
       debug "message received from #{jid}"
-      #jid = jid.split('/')[0]
       window = message_window_for(jid)
-      #pp @contacts_data
       debug "add msg"
       window.add_message(text)
     end
     
     def item_presence_change(jid,presence,status)
-      @contacts_rows[jid].set_value(1,Gdk::Pixbuf.new(Onim::PATH+'gui/images/'+'user_online.gif'))
-    end
-    # 
-    # items:
-    # { :name => 'John',
-    #   :jid => 'john@example.com'Cell }
-    #
-    #
+      debug "item presence changing for #{jid}"
+      # FIXME
+      jid = jid.split("/n")[0]
+      @contacts_rows[jid].set_value(1,image_for_presence(presence))
+      @contacts_rows[jid].set_value(2,"watta "+@contacts_rows[jid][2].split("\n")[0]+"\n<i>#{status}</i>")
+      @contacts_rows[jid].set_value(4,presence.to_s[0].chr+@contacts_rows[jid][4][1..-1])
+ end
+    
     def set_roster_items(items)
       @contacts_rows = {}
       
-      contacts_model = Gtk::TreeStore.new(Hash,Gdk::Pixbuf,String,Symbol)
-      #issues = []
-      #issues = redmine.project_issues project_id, @assignee_filter, @status_filter
+      contacts_model = Gtk::TreeStore.new(Hash,Gdk::Pixbuf,String,Gdk::Color,String)
       #items = [{:name => 'ueoau', :jid => 'ueoueo'},{:name => 'ueoa', :jid => 'euooeu'}]
-      #pp issues      
-      items.each do |item|
-        status = item.presence
-        x = contacts_model.append nil
+      @groups_rows = {}
+      items.each do |item|        
+        item.group = 'dupa' unless item.group
+        if item.group
+          if @groups_rows[item.group]
+            parent = @groups_rows[item.group]
+          else            
+            parent = contacts_model.append nil
+            parent.set_value(0,nil)
+            parent.set_value(1,nil)
+            parent.set_value(2,item.group)
+            max_color = 255*255
+            parent.set_value(3,Gdk::Color.new(max_color,max_color,max_color*0.8))
+            @groups_rows[item.group] = parent
+            parent.set_value(4,item.group)
+          end
+        else
+          parent = nil
+        end
+        
+        x = contacts_model.append parent
+        
         @contacts_rows[item.jid] = x
         x.set_value(0,item)
-        image = case status
-        when :unavailable then 'user_offline.gif'
-        when :online then 'user_online.gif'
-        else 'user_dnd.gif'
-        end
-        x.set_value(1,Gdk::Pixbuf.new(Onim::PATH+'gui/images/'+image))
-        x.set_value(2,"<b>item.name</b>\noeueoueo")
-        x.set_value(3,status)
-#        @contacts.model.insert(nil,@contacts.model.iter_first,[{},'ueoa','euee','aaaa'])
+        x.set_value(1,image_for_presence(item.presence))
+        x.set_value(2,"#{item.name}\n")
+#        x.set_value(3,item.presence)
+        x.set_value(3,nil)
+        presence_sort = item.presence.to_s[0].chr
+        debug "presence sort: #{presence_sort}"
+        x.set_value(4,presence_sort+(item.name|| ''))
+
+
       end
       
+      contacts_model.set_sort_column_id(4)
       @contacts.model = contacts_model
+      #@contacts.expand_all
     end
     
     def debug(text)
       base.debug("Gui: #{text}")
+    end
+    
+    protected
+    
+    def image_for_presence(presence)
+      debug "image for presence #{presence} :: #{presence.class}"
+        image = case presence
+        when :unavailable then 'user_offline.gif'
+        when :available then 'user_online.gif'
+        else 'user_dnd.gif'
+        end      
+        Gdk::Pixbuf.new(Onim::PATH+'gui/images/'+image)
     end
   end
 end

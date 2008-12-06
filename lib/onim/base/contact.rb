@@ -5,12 +5,14 @@ module Onim
       attr_accessor :name    
       attr_accessor :group
       attr_accessor :presence
+      attr_accessor :status
 
-      def initialize(jid,name,options)
+      def initialize(jid,name,options={})
         @name = name
         @jid = jid
         @presence = options[:presence] || :unavailable
         @group = options[:group]
+        @status = options[:group]
       end
 
       def pure_jid

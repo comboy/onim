@@ -13,7 +13,7 @@ module Onim
         @contacts << contact
       end
       def [](jid)        
-        @contacts.find {|c| c.jid == jid}        
+        @contacts.find {|c| c.jid == jid} || Contact.new(jid,jid)       
       end
     end
     

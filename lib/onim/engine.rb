@@ -7,7 +7,7 @@ module Onim
     
     attr_accessor :base
     
-    include Jabber
+    #include Jabber
     #Jabber::debug = true 
     
     def initialize(base)
@@ -15,7 +15,8 @@ module Onim
     end
     
     def send_message(jid,text)
-      m = Message.new(jid, text)
+      m = Jabber::Message.new(jid, text)
+      m.set_type :chat
       @client.send m
     end
     
@@ -25,48 +26,39 @@ module Onim
       begin
         
       debug "setting up.."
-      cl = Client.new(JID::new('kompotek@jabster.pl'))
-      #cl = Client.new(JID::new('comboy@softwarelab.eu'))
+      #cl = Jabber::Client.new(Jabber::JID::new('kompotek@jabster.pl'))
+      cl = Jabber::Client.new(Jabber::JID::new('kacper.ciesla@gmail.com'))
       @client = cl
       debug "connect"
       cl.connect
       debug "auth"
-      cl.auth 'bociankowo'
-      #cl.auth 'spoczko'
+      #cl.auth 'bociankowo'
+      cl.auth 'mrthnwrds7'
       debug "done"
       
       
           
       
-     #cl.presence_updates do |friend, old_presence, new_presence|
-     #  puts "Received presence update from #{friend.to_s}: #{new_presence}"
-     #end
-     
-     # user1 sends the message "do you like Tofu?"
-     #cl.received_messages do |message|
-     #  puts "Received message from #{message.from}: #{message.body}"
-   # end
-    
 
-    @roster = Roster::Helper.new cl
+    @roster = Jabber::Roster::Helper.new cl
               
     @roster.add_presence_callback do |item,oldpres,pres|
-      pres = Presence.new unless pres
-      oldpres = Presence.new unless oldpres
+      pres = Jabber::Presence.new unless pres
+      oldpres = Jabber::Presence.new unless oldpres
 
             
-      base.debug "presence change: #{pres.from} : #{pres.type.inspect} #{pres.status.to_s}"     
-      base.debug "mmmmmmmm #{pres.show} ===== #{pres.priority} <"     
-      pres = oldpres
-      base.debug "OLD presence change: #{pres.from} : #{pres.type.inspect} #{pres.status.to_s}"     
-      base.debug "OLD mmmmmmmm #{pres.show} (#{pres.show.class}) ===== #{pres.priority} <"     
+      #base.debug "presence change: #{pres.from} : #{pres.type.inspect }: #{pres.status.to_s}"     
+      #base.debug "mmmmmmmm #{pres.show} ===== #{pres.priority} <"     
+      #pres = oldpres
+      #base.debug "OLD presence change: #{pres.from} : #{pres.type.inspect} #{pres.status.to_s}"     
+      #base.debug "OLD mmmmmmmm #{pres.show} (#{pres.show.class}) ===== #{pres.priority} <"     
             
-      status = pres.status
+      status = pres.status.to_s
       presence = pres.show || :available
       jid = item.jid
       # XXX unavaliable
       presence = :unavailable if pres.status.to_s == 'unavailable'
-      base.item_presence_change(jid,presence,status)
+      base.item_presence_change(jid.to_s,presence,status)
     end
           
     mainthread = Thread.current
@@ -87,7 +79,7 @@ module Onim
             @roster.find_by_group(group).each { |item|
               debug "- #{item.iname} (#{item.jid})"
               #items << {:name => item.iname, :jid => item.jid.to_s}
-              items << Base::Contact.new(item.jid, item.iname, :group => group)
+              items << Base::Contact.new(item.jid.to_s, item.iname, :group => group)
             }
             
             debug "\n"
@@ -96,23 +88,13 @@ module Onim
           @base.roster_items = items
       
       puts "set presence"
-      cl.send(Presence.new)
+      cl.send(Jabber::Presence.new)
       puts "www"
       mainthread = Thread.current
       cl.add_message_callback do |m|
         if m.type != :error
           debug "message received from #{m.from} type #{m.type}"
           @base.message_received(m.from.to_s,m.body)
-#          puts "engine, done"
-#          m2 = Message.new(m.from, "You sent: #{m.body}")
-#          m2.type = m.type
-#          cl.send(m2)
-#          if m.body == 'exit'
-#            m2 = Message.new(m.from, "Exiting ...")
-#            m2.type = m.type
-#            cl.send(m2)
-#            mainthread.wakeup
-#          end
         end
       end
       Thread.stop
@@ -120,8 +102,10 @@ module Onim
       cl.send(Presence.new.set_type(:available))
 
       rescue Exception => e
-        puts e
-        puts e.backtrace
+        #puts e
+        #puts e.backtrace
+        debug "EXCEPTION !!! #{e}"
+        debug e.backtrace
       end
       end
     end
