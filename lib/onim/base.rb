@@ -27,6 +27,7 @@ module Onim
     end
     
     def item_presence_change(jid,presence,status)
+      debug("item presence change: #{jid} | #{presence} | #{status}")
       @gui.item_presence_change(jid,presence,status)
     end
     

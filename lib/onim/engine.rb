@@ -63,9 +63,10 @@ module Onim
             
       status = pres.status
       presence = pres.show || :available
+      jid = item.jid
       # XXX unavaliable
       presence = :unavailable if pres.status.to_s == 'unavailable'
-      base.item_presence_change(pres.from,presence,status)
+      base.item_presence_change(jid,presence,status)
     end
           
     mainthread = Thread.current

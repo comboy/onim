@@ -26,7 +26,7 @@ module Onim
           @contacts.append_column(Gtk::TreeViewColumn.new(name, renderer, :pixbuf => index+1, 'background-gdk' => 7))
         else
           renderer = Gtk::CellRendererText.new
-          @contacts.append_column(Gtk::TreeViewColumn.new(name, renderer, :text => index+1, 'background-gdk' => 7))
+          @contacts.append_column(Gtk::TreeViewColumn.new(name, renderer, :markup => index+1, 'background-gdk' => 7))
         end
         #renderer.font = "bold" if index == 5
       end
@@ -86,7 +86,7 @@ module Onim
     end
     
     def item_presence_change(jid,presence,status)
-      
+      @contacts_rows[jid].set_value(1,Gdk::Pixbuf.new(Onim::PATH+'gui/images/'+'user_online.gif'))
     end
     # 
     # items:
@@ -95,7 +95,7 @@ module Onim
     #
     #
     def set_roster_items(items)
-      @contacts_data = {}
+      @contacts_rows = {}
       
       contacts_model = Gtk::TreeStore.new(Hash,Gdk::Pixbuf,String,Symbol)
       #issues = []
@@ -103,9 +103,9 @@ module Onim
       #items = [{:name => 'ueoau', :jid => 'ueoueo'},{:name => 'ueoa', :jid => 'euooeu'}]
       #pp issues      
       items.each do |item|
-        #@contacts_data[item[:jid]] = item
         status = item.presence
         x = contacts_model.append nil
+        @contacts_rows[item.jid] = x
         x.set_value(0,item)
         image = case status
         when :unavailable then 'user_offline.gif'
@@ -113,7 +113,7 @@ module Onim
         else 'user_dnd.gif'
         end
         x.set_value(1,Gdk::Pixbuf.new(Onim::PATH+'gui/images/'+image))
-        x.set_value(2,item.name)
+        x.set_value(2,"<b>item.name</b>\noeueoueo")
         x.set_value(3,status)
 #        @contacts.model.insert(nil,@contacts.model.iter_first,[{},'ueoa','euee','aaaa'])
       end
