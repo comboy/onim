@@ -23,13 +23,24 @@ module Onim
       %w{Icon Contact}.each_with_index do |name,index| 
         if name == 'Icon'
           renderer = Gtk::CellRendererPixbuf.new          
-          @contacts.append_column(Gtk::TreeViewColumn.new(name, renderer, :pixbuf => index+1, 'background-gdk' => 3))
+          column = Gtk::TreeViewColumn.new(name, renderer, :pixbuf => index+1)
+          #column.max_width = 30
+          @contacts.append_column(column)
         else
           renderer = Gtk::CellRendererText.new
+          #renderer.single_paragraph_mode = true
+          renderer.wrap_mode = Pango::Layout::WrapMode::WORD
+          renderer.alignment = Pango::Layout::Alignment::LEFT
           @contacts.append_column(@bla = Gtk::TreeViewColumn.new(name, renderer, :markup => index+1, 'background-gdk' => 3))
         end
       end
-      @contacts.expander_column = @bla
+      #@contacts.expander_column = @bla
+      #@contacts.headers_visible = true
+      #@contacts.level_indentation = -10      
+      @contacts.tooltip_column = 2
+      #@contacts.set_style_property('indent-expanders',true)
+      #pp @contacts.style_properties
+     # @contacts.enable_grid_lines = Gtk::TreeView::GridLines::BOTH
       @contacts.signal_connect('row-activated') { 
         |view,path,column| contact_click @contacts.model.get_iter(path)[0]
         
@@ -85,14 +96,14 @@ module Onim
       # FIXME
       jid = jid.split("/n")[0]
       @contacts_rows[jid].set_value(1,image_for_presence(presence))
-      @contacts_rows[jid].set_value(2,"watta "+@contacts_rows[jid][2].split("\n")[0]+"\n<i>#{status}</i>")
-      @contacts_rows[jid].set_value(4,presence.to_s[0].chr+@contacts_rows[jid][4][1..-1])
+      @contacts_rows[jid].set_value(2,@contacts_rows[jid][2].split("\n")[0]+(status.to_s.chomp!= '' ? "\n<i>#{status}</i>" : ""))
+      @contacts_rows[jid].set_value(5,presence.to_s[0].chr+@contacts_rows[jid][4][1..-1])
  end
     
     def set_roster_items(items)
       @contacts_rows = {}
       
-      contacts_model = Gtk::TreeStore.new(Hash,Gdk::Pixbuf,String,Gdk::Color,String)
+      contacts_model = Gtk::TreeStore.new(Hash,Gdk::Pixbuf,String,Gdk::Color,String,String)
       #items = [{:name => 'ueoau', :jid => 'ueoueo'},{:name => 'ueoa', :jid => 'euooeu'}]
       @groups_rows = {}
       items.each do |item|        
@@ -109,6 +120,7 @@ module Onim
             parent.set_value(3,Gdk::Color.new(max_color,max_color,max_color*0.8))
             @groups_rows[item.group] = parent
             parent.set_value(4,item.group)
+            parent.set_value(5,item.group)
           end
         else
           parent = nil
@@ -119,17 +131,18 @@ module Onim
         @contacts_rows[item.jid] = x
         x.set_value(0,item)
         x.set_value(1,image_for_presence(item.presence))
-        x.set_value(2,"#{item.name}\n")
+        x.set_value(2,"#{item.name}")
 #        x.set_value(3,item.presence)
         x.set_value(3,nil)
         presence_sort = item.presence.to_s[0].chr
         debug "presence sort: #{presence_sort}"
-        x.set_value(4,presence_sort+(item.name|| ''))
+        x.set_value(4,"#{item.jid}\n#{item.status}")
+        x.set_value(5,presence_sort+(item.name|| ''))
 
 
       end
       
-      contacts_model.set_sort_column_id(4)
+      contacts_model.set_sort_column_id(5)
       @contacts.model = contacts_model
       #@contacts.expand_all
     end
@@ -143,11 +156,15 @@ module Onim
     def image_for_presence(presence)
       debug "image for presence #{presence} :: #{presence.class}"
         image = case presence
-        when :unavailable then 'user_offline.gif'
-        when :available then 'user_online.gif'
+        when :unavailable then 'offline.png'
+        when :available then 'available.png'
+        when :away then 'away.png'
+        when :extended_away then 'extended-away.png'
+        when :dnd then 'busy.png'
+        when :chat then 'chat.png'
         else 'user_dnd.gif'
         end      
-        Gdk::Pixbuf.new(Onim::PATH+'gui/images/'+image)
+        Gdk::Pixbuf.new(Onim::PATH+'gui/images/status/'+image)
     end
   end
 end

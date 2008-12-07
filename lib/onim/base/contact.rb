@@ -13,11 +13,17 @@ module Onim
         @presence = options[:presence] || :unavailable
         @group = options[:group]
         @status = options[:group]
+        if @vcard = options[:vcard]
+          if @vcard["PHOTO/TYPE"] && @vcard["PHOTO/BINVAL"]
+            
+          end
+        end
       end
 
       def pure_jid
         @jid.split('/')[0]            
       end
+      
     end
   end
 end

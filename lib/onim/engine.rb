@@ -1,6 +1,7 @@
 require 'rubygems'
 require 'xmpp4r'
 require 'xmpp4r/roster'
+require 'xmpp4r/vcard'
 
 module Onim
   class Engine
@@ -26,14 +27,14 @@ module Onim
       begin
         
       debug "setting up.."
-      #cl = Jabber::Client.new(Jabber::JID::new('kompotek@jabster.pl'))
-      cl = Jabber::Client.new(Jabber::JID::new('kacper.ciesla@gmail.com'))
+      cl = Jabber::Client.new(Jabber::JID::new('kompotek@jabster.pl'))
+      #cl = Jabber::Client.new(Jabber::JID::new('kacper.ciesla@gmail.com'))
       @client = cl
       debug "connect"
       cl.connect
       debug "auth"
-      #cl.auth 'bociankowo'
-      cl.auth 'mrthnwrds7'
+      cl.auth 'bociankowo'
+      #cl.auth 'mrthnwrds7'
       debug "done"
       
       
@@ -78,8 +79,14 @@ module Onim
             
             @roster.find_by_group(group).each { |item|
               debug "- #{item.iname} (#{item.jid})"
+              vcard = Jabber::Vcard::Helper.new(cl).get(item.jid.strip)
+              vcard_hash = {}
+              pp vcard.fields
+              vcard.fields.each do |field|
+                vcard_hash[field] = vcard[field]
+              end
               #items << {:name => item.iname, :jid => item.jid.to_s}
-              items << Base::Contact.new(item.jid.to_s, item.iname, :group => group)
+              items << Base::Contact.new(item.jid.to_s, item.iname, :group => group, :vcard => vcard_hash)
             }
             
             debug "\n"

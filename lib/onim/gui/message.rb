@@ -9,7 +9,6 @@ module Onim
         debug "Message.new"
         @contact = contact        
         create_window
-        @nickname_tag = @talk.buffer.create_tag('nickname', 'weight' => Pango::FontDescription::WEIGHT_BOLD)
       end
       
       def add_message(text,name=nil)
@@ -43,15 +42,21 @@ module Onim
         @window.signal_connect("destroy") do  |window|
           debug "message close"
           @window = nil
-        end        
+        end
+        @nickname_tag = @talk.buffer.create_tag('nickname', 'weight' => Pango::FontDescription::WEIGHT_BOLD)
+        @bla_tag = @input.buffer.create_tag('nickname', 'weight' => Pango::FontDescription::WEIGHT_BOLD)
+         @input.buffer.insert @input.buffer.end_iter,"eooeu",@bla_tag
+    
         @window
       end
 
       def send_message
         text = @input.buffer.text
+        debug "sraaaaaakaaaaaaaaaaaa"+@input.buffer.get_slice(nil,nil,true)
         add_message text, 'Ja'
         @gui.base.send_message @contact.jid, text
         @input.buffer.text = ''
+        debug "seeeeeeend"
       end
       
       def debug(text)

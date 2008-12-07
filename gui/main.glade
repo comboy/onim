@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE glade-interface SYSTEM "glade-2.0.dtd">
-<!--Generated with glade3 3.4.5 on Sat Dec  6 22:16:51 2008 -->
+<!--Generated with glade3 3.4.5 on Sat Dec  6 23:50:57 2008 -->
 <glade-interface>
   <widget class="GtkWindow" id="window_main">
     <child>
@@ -78,6 +78,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="headers_visible">False</property>
+                <property name="enable_search">False</property>
               </widget>
             </child>
           </widget>

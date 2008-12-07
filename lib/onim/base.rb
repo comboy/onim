@@ -34,6 +34,10 @@ module Onim
     def set_presence(presence,status='')
       @engine.set_presence(presence,status)
     end
+    
+    def homedir
+      File.join(::Onim::PATH,"tmp")
+    end
         
     def debug(text)
       @logger.info text 
