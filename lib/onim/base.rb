@@ -27,7 +27,9 @@ module Onim
     end
     
     def item_presence_change(jid,presence,status)
-      debug("item presence change: #{jid} | #{presence} | #{status}")
+      debug("item presence change: #{jid} | #{presence} | #{status}")      
+      pure_jid, resource = jid.split('/')
+      @roster[pure_jid].update_presence(resource,presence,)
       @gui.item_presence_change(jid,presence,status)
     end
     
@@ -42,5 +44,12 @@ module Onim
     def debug(text)
       @logger.info text 
     end
+    
+    protected
+    
+    def strip_jid(jid)
+      jid.split('/')[0]
+    end
+    
   end
 end 

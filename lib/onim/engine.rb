@@ -9,7 +9,7 @@ module Onim
     attr_accessor :base
     
     #include Jabber
-    Jabber::debug = true 
+    #Jabber::debug = true 
     
     def initialize(base)
       @base = base
@@ -73,11 +73,6 @@ module Onim
           items =  []
           
           @roster.groups.each { |group|
-            if group.nil?
-              debug "*** Ungrouped ***"
-            else
-              debug "*** #{group.inspect} ***"
-            end
             
             @roster.find_by_group(group).each { |item|
               contact = Base::Contact.new(item.jid.to_s, item.iname, :group => group)

@@ -9,12 +9,15 @@ module Onim
       def initialize
         @contacts = []
       end
+      
       def add_contact(contact)
         @contacts << contact
       end
+      
       def [](jid)        
         @contacts.find {|c| c.jid == jid} || Contact.new(jid,jid)       
       end
+       
     end
     
   end

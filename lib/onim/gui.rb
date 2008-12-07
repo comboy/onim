@@ -95,9 +95,11 @@ module Onim
       debug "item presence changing for #{jid}"
       # FIXME
       jid = jid.split("/n")[0]
-      @contacts_rows[jid].set_value(1,image_for_presence(presence))
-      @contacts_rows[jid].set_value(2,@contacts_rows[jid][2].split("\n")[0]+(status.to_s.chomp!= '' ? "\n<i>#{status}</i>" : ""))
-      @contacts_rows[jid].set_value(6,presence.to_s[0].chr+@contacts_rows[jid][4][1..-1])
+      item = @contacts_rows[jid]
+      fill_model_values_for_item item, x
+      #@contacts_rows[jid].set_value(1,image_for_presence(presence))
+      #@contacts_rows[jid].set_value(2,@contacts_rows[jid][2].split("\n")[0]+(status.to_s.chomp!= '' ? "\n<i>#{status}</i>" : ""))
+      #@contacts_rows[jid].set_value(6,presence.to_s[0].chr+@contacts_rows[jid][4][1..-1])
  end
     
     def set_roster_items(items)
@@ -128,21 +130,8 @@ module Onim
         end
         
         x = contacts_model.append parent
-        
         @contacts_rows[item.jid] = x
-        x.set_value(0,item)
-        x.set_value(1,image_for_presence(item.presence))
-        x.set_value(2,"#{item.name}")
-#        x.set_value(3,item.presence)
-        x.set_value(3,nil)
-        presence_sort = item.presence.to_s[0].chr
-        debug "presence sort: #{presence_sort}"
-        x.set_value(4,"#{item.jid}\n#{item.status}")
-        x.set_value(5,nil)
-        if item.image_file
-          x.set_value(5,Gdk::Pixbuf.new(item.image_file,30,30))
-        end
-        x.set_value(6,presence_sort+(item.name|| ''))
+        fill_model_values_for_item item, x
 
 
       end
@@ -157,6 +146,20 @@ module Onim
     end
     
     protected
+    
+    def fill_model_values_for_item(item,row)
+        x = row
+        x.set_value(0,item)
+        x.set_value(1,image_for_presence(item.presence))
+        x.set_value(2,"#{item.name}")
+        x.set_value(3,nil)
+        x.set_value(4,"#{item.jid}\n#{item.status}")
+        x.set_value(5,nil)        
+        x.set_value(5,Gdk::Pixbuf.new(item.image_file,30,30)) if item.image_file
+        presence_sort = item.presence.to_s[0].chr
+        debug "presence sort: #{presence_sort}"
+        x.set_value(6,presence_sort+(item.name|| ''))     
+    end
     
     def image_for_presence(presence)
       debug "image for presence #{presence} :: #{presence.class}"
