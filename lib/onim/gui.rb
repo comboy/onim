@@ -20,10 +20,10 @@ module Onim
 
       # Load contacts lists and create columns
       @contacts = @glade['treeview_contacts']      
-      %w{Icon Contact}.each_with_index do |name,index| 
-        if name == 'Icon'
+      %w{Icon Contact Avatar}.each_with_index do |name,index| 
+        if name == 'Icon' || name == 'Avatar'
           renderer = Gtk::CellRendererPixbuf.new          
-          column = Gtk::TreeViewColumn.new(name, renderer, :pixbuf => index+1)
+          column = Gtk::TreeViewColumn.new(name, renderer, :pixbuf => (name == 'Icon' ? index+1 : 5))
           #column.max_width = 30
           @contacts.append_column(column)
         else
@@ -97,13 +97,13 @@ module Onim
       jid = jid.split("/n")[0]
       @contacts_rows[jid].set_value(1,image_for_presence(presence))
       @contacts_rows[jid].set_value(2,@contacts_rows[jid][2].split("\n")[0]+(status.to_s.chomp!= '' ? "\n<i>#{status}</i>" : ""))
-      @contacts_rows[jid].set_value(5,presence.to_s[0].chr+@contacts_rows[jid][4][1..-1])
+      @contacts_rows[jid].set_value(6,presence.to_s[0].chr+@contacts_rows[jid][4][1..-1])
  end
     
     def set_roster_items(items)
       @contacts_rows = {}
       
-      contacts_model = Gtk::TreeStore.new(Hash,Gdk::Pixbuf,String,Gdk::Color,String,String)
+      contacts_model = Gtk::TreeStore.new(Hash,Gdk::Pixbuf,String,Gdk::Color,String,Gdk::Pixbuf,String)
       #items = [{:name => 'ueoau', :jid => 'ueoueo'},{:name => 'ueoa', :jid => 'euooeu'}]
       @groups_rows = {}
       items.each do |item|        
@@ -120,7 +120,8 @@ module Onim
             parent.set_value(3,Gdk::Color.new(max_color,max_color,max_color*0.8))
             @groups_rows[item.group] = parent
             parent.set_value(4,item.group)
-            parent.set_value(5,item.group)
+            parent.set_value(5,nil)
+            parent.set_value(6,item.group)
           end
         else
           parent = nil
@@ -137,12 +138,16 @@ module Onim
         presence_sort = item.presence.to_s[0].chr
         debug "presence sort: #{presence_sort}"
         x.set_value(4,"#{item.jid}\n#{item.status}")
-        x.set_value(5,presence_sort+(item.name|| ''))
+        x.set_value(5,nil)
+        if item.image_file
+          x.set_value(5,Gdk::Pixbuf.new(item.image_file,30,30))
+        end
+        x.set_value(6,presence_sort+(item.name|| ''))
 
 
       end
       
-      contacts_model.set_sort_column_id(5)
+      contacts_model.set_sort_column_id(6)
       @contacts.model = contacts_model
       #@contacts.expand_all
     end
@@ -162,7 +167,7 @@ module Onim
         when :extended_away then 'extended-away.png'
         when :dnd then 'busy.png'
         when :chat then 'chat.png'
-        else 'user_dnd.gif'
+        else 'person.png'
         end      
         Gdk::Pixbuf.new(Onim::PATH+'gui/images/status/'+image)
     end

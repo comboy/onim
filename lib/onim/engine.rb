@@ -9,7 +9,7 @@ module Onim
     attr_accessor :base
     
     #include Jabber
-    #Jabber::debug = true 
+    Jabber::debug = true 
     
     def initialize(base)
       @base = base
@@ -27,14 +27,16 @@ module Onim
       begin
         
       debug "setting up.."
-      cl = Jabber::Client.new(Jabber::JID::new('kompotek@jabster.pl'))
-      #cl = Jabber::Client.new(Jabber::JID::new('kacper.ciesla@gmail.com'))
+      #cl = Jabber::Client.new(Jabber::JID::new('kompotek@jabster.pl'))
+      #cl = Jabber::Client.new(Jabber::JID::new('kacper.ciesla@gmail.com/srakaaa'))
+      cl = Jabber::Client.new(Jabber::JID::new('comboy@softwarelab.eu/wattttt'))
       @client = cl
       debug "connect"
       cl.connect
       debug "auth"
-      cl.auth 'bociankowo'
+      #cl.auth 'bociankowo'
       #cl.auth 'mrthnwrds7'
+      cl.auth 'spoczko'
       debug "done"
       
       
@@ -78,15 +80,30 @@ module Onim
             end
             
             @roster.find_by_group(group).each { |item|
+              contact = Base::Contact.new(item.jid.to_s, item.iname, :group => group)
+              Thread.new do
               debug "- #{item.iname} (#{item.jid})"
-              vcard = Jabber::Vcard::Helper.new(cl).get(item.jid.strip)
               vcard_hash = {}
-              pp vcard.fields
-              vcard.fields.each do |field|
-                vcard_hash[field] = vcard[field]
+              begin
+                puts "getting vcard "
+                vcard = Jabber::Vcard::Helper.new(cl).get(item.jid.strip)
+                puts "don"
+                #pp vcard.fields
+                if vcard
+                  vcard.fields.each do |field|
+                    vcard_hash[field] = vcard[field]
+                  end
+                  contact,vcard = vcard_hash
+                else
+                  puts "no vcard for #{item.jid}"
+                end
+              rescue Exception => ex
+                pp ex
+                puts "Error while getting avatar"
+              end
               end
               #items << {:name => item.iname, :jid => item.jid.to_s}
-              items << Base::Contact.new(item.jid.to_s, item.iname, :group => group, :vcard => vcard_hash)
+              items << contact#, :vcard => vcard_hash)
             }
             
             debug "\n"
