@@ -50,6 +50,11 @@ module Onim
 
     Dir.glob(search_me).sort.each {|rb| require rb}
   end
+  
+  def self.conf_dir
+    File.expand_path('~/.onim')
+  end
+
 
 end  # module Onim
 

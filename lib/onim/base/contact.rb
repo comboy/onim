@@ -27,7 +27,7 @@ module Onim
         @name = name
         @jid = jid       
         @group = options[:group]
-        @resoucres = {}
+        @resources = {}
       end
 
       def pure_jid
@@ -50,7 +50,12 @@ module Onim
       end
       
       def update_presence(resource,presence,status)
-        
+        if res = @resources[resource]
+          res.presence = presence
+          res.status = status
+        else
+          @resources[resource] = Resource.new resource, presence, status
+        end
       end
       
       def presence

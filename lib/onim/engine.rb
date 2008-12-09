@@ -28,15 +28,26 @@ module Onim
         
       debug "setting up.."
       #cl = Jabber::Client.new(Jabber::JID::new('kompotek@jabster.pl'))
+      cl = Jabber::Client.new(Jabber::JID::new(base.config[:account_jid]))
       #cl = Jabber::Client.new(Jabber::JID::new('kacper.ciesla@gmail.com/srakaaa'))
-      cl = Jabber::Client.new(Jabber::JID::new('comboy@softwarelab.eu/wattttt'))
+      #cl = Jabber::Client.new(Jabber::JID::new('comboy@softwarelab.eu/wattttt'))
       @client = cl
       debug "connect"
-      cl.connect
       debug "auth"
-      #cl.auth 'bociankowo'
+      begin
+        cl.connect
+        #cl.auth 'ociankowo'
+        cl.auth base.config[:auth_pasword]
+      #rescue Jabber::ClientAuthenticationFailure => ex
+      # XXX
+      rescue Exception => ex
+        @base.auth_failure
+        return
+      end
+      
+        
       #cl.auth 'mrthnwrds7'
-      cl.auth 'spoczko'
+      #cl.auth 'spoczko'
       debug "done"
       
       
@@ -61,6 +72,7 @@ module Onim
       jid = item.jid
       # XXX unavaliable
       presence = :unavailable if pres.status.to_s == 'unavailable'
+      debug "item #{jid} chaged presence to #{presence} status #{status}"
       base.item_presence_change(jid.to_s,presence,status)
     end
           
@@ -123,7 +135,7 @@ module Onim
       rescue Exception => e
         #puts e
         #puts e.backtrace
-        debug "EXCEPTION !!! #{e}"
+        debug "EXCEPTION !!! [#{e.class}] #{e}"
         debug e.backtrace
       end
       end
@@ -131,7 +143,7 @@ module Onim
     
     protected
       def debug(text)
-        base.debug("Base: #{text}")
+        base.debug("Engine: #{text}")
       end
   end
 end

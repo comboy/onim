@@ -61,6 +61,21 @@ module Onim
       @message_windows = {}
     end
     
+    def show_error(text)
+      dialog = Gtk::MessageDialog.new(@window, 
+          Gtk::Dialog::DESTROY_WITH_PARENT,
+          Gtk::MessageDialog::ERROR,
+          Gtk::MessageDialog::BUTTONS_OK,
+          text)
+      dialog.run
+      dialog.destroy
+    end
+    
+    def show_account_configuration
+      bla = Account.new @base
+      puts "done #{bla}"
+    end
+    
     def show
       @main.show
       Gtk.main
@@ -91,16 +106,22 @@ module Onim
       window.add_message(text)
     end
     
-    def item_presence_change(jid,presence,status)
-      debug "item presence changing for #{jid}"
-      # FIXME
-      jid = jid.split("/n")[0]
-      item = @contacts_rows[jid]
-      fill_model_values_for_item item, x
-      #@contacts_rows[jid].set_value(1,image_for_presence(presence))
-      #@contacts_rows[jid].set_value(2,@contacts_rows[jid][2].split("\n")[0]+(status.to_s.chomp!= '' ? "\n<i>#{status}</i>" : ""))
-      #@contacts_rows[jid].set_value(6,presence.to_s[0].chr+@contacts_rows[jid][4][1..-1])
- end
+#    def item_presence_change(jid,presence,status)
+#      debug "item presence changing for #{jid}"
+#      # FIXME
+#      jid = jid.split("/n")[0]
+#      x = @contacts_rows[jid]
+#      fill_model_values_for_item item, x
+#      #@contacts_rows[jid].set_value(1,image_for_presence(presence))
+#      #@contacts_rows[jid].set_value(2,@contacts_rows[jid][2].split("\n")[0]+(status.to_s.chomp!= '' ? "\n<i>#{status}</i>" : ""))
+#      #@contacts_rows[jid].set_value(6,presence.to_s[0].chr+@contacts_rows[jid][4][1..-1])
+#    end
+    
+    def item_update(item)
+      debug "item update"
+      row = @contacts_rows[item.jid]
+      fill_model_values_for_item item, row
+    end
     
     def set_roster_items(items)
       @contacts_rows = {}

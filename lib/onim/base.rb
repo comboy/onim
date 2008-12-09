@@ -2,12 +2,16 @@ module Onim
   class Base
     
     attr_accessor :roster
+    attr_accessor :config
     
     def initialize
       @logger = Logger.new File.join(Onim::PATH,"test.log")
+      @config = Config.new self
       @roster = Roster.new
       @engine = Engine.new self
       @gui = Gui.new self
+#      @gui.show_error "ueonth"
+     # @account = Gui::Account.new self
       @engine.connect
       @gui.show
     end
@@ -19,6 +23,8 @@ module Onim
     
     def message_received(jid,text)
       puts "base: message received"
+      # XXX like this it's not possible for gui to tell which resorce sent it
+      strip_jid jid
       @gui.message_received jid, text
     end
     
@@ -29,12 +35,22 @@ module Onim
     def item_presence_change(jid,presence,status)
       debug("item presence change: #{jid} | #{presence} | #{status}")      
       pure_jid, resource = jid.split('/')
-      @roster[pure_jid].update_presence(resource,presence,)
-      @gui.item_presence_change(jid,presence,status)
+      item = @roster[pure_jid]
+      item.update_presence(resource,presence,status)
+      @gui.item_update item
     end
     
     def set_presence(presence,status='')
       @engine.set_presence(presence,status)
+    end
+    
+    def auth_failure
+      @gui.show_error("Niepoprawne dane logowania do serwera jabbera")
+      Gui::Account.new self, true
+    end
+    
+    def connect
+      @engine.connect
     end
     
     def homedir
