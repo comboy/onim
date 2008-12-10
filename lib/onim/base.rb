@@ -12,7 +12,10 @@ module Onim
       @gui = Gui.new self
 #      @gui.show_error "ueonth"
      # @account = Gui::Account.new self
-      @engine.connect
+      
+      Thread.new do 
+        @engine.connect
+      end
       @gui.show
     end
     

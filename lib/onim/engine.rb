@@ -22,33 +22,33 @@ module Onim
     end
     
     def connect
-      Thread.new do
+      #Thread.new do
         
       begin
         
-      debug "setting up.."
+      debug "setting up.. jid #{base.config[:account_jid]}"
       #cl = Jabber::Client.new(Jabber::JID::new('kompotek@jabster.pl'))
+      
       cl = Jabber::Client.new(Jabber::JID::new(base.config[:account_jid]))
+      
       #cl = Jabber::Client.new(Jabber::JID::new('kacper.ciesla@gmail.com/srakaaa'))
       #cl = Jabber::Client.new(Jabber::JID::new('comboy@softwarelab.eu/wattttt'))
       @client = cl
-      debug "connect"
-      debug "auth"
       begin
+        debug "connect"
         cl.connect
-        #cl.auth 'ociankowo'
-        cl.auth base.config[:auth_pasword]
+        #cl.auth 'bociankowo'
+        debug "auth #{base.config[:account_password]}"
+        cl.auth base.config[:account_password]
       #rescue Jabber::ClientAuthenticationFailure => ex
       # XXX
-      rescue Exception => ex
-        @base.auth_failure
-        return
+      rescue Exception => ex        
+        @base.auth_failure        
       end
       
         
       #cl.auth 'mrthnwrds7'
       #cl.auth 'spoczko'
-      debug "done"
       
       
           
@@ -138,7 +138,7 @@ module Onim
         debug "EXCEPTION !!! [#{e.class}] #{e}"
         debug e.backtrace
       end
-      end
+      #end
     end
     
     protected
