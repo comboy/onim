@@ -80,11 +80,7 @@ module Onim
       @main.show
       Gtk.main
     end
-    
-    def sm
-      message_window = Message.new self, {:name => 'wou'}
-    end
-    
+
     def contact_click(contact)
       message_window_for(contact.jid).window
     end

@@ -19,6 +19,10 @@ module Onim
       @gui.show
     end
     
+    def update_roster_item(item)
+      @gui.item_update item
+    end
+    
     def roster_items=(items)
       @roster.contacts = items
       @gui.set_roster_items @roster.contacts

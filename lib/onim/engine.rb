@@ -8,7 +8,6 @@ module Onim
     
     attr_accessor :base
     
-    #include Jabber
     #Jabber::debug = true 
     
     def initialize(base)
@@ -22,101 +21,71 @@ module Onim
     end
     
     def connect
-      #Thread.new do
-        
-      begin
-        
-      debug "setting up.. jid #{base.config[:account_jid]}"
-      #cl = Jabber::Client.new(Jabber::JID::new('kompotek@jabster.pl'))
-      
+      debug "setting up.. jid #{base.config[:account_jid]}"    
       cl = Jabber::Client.new(Jabber::JID::new(base.config[:account_jid]))
-      
-      #cl = Jabber::Client.new(Jabber::JID::new('kacper.ciesla@gmail.com/srakaaa'))
-      #cl = Jabber::Client.new(Jabber::JID::new('comboy@softwarelab.eu/wattttt'))
       @client = cl
       begin
         debug "connect"
         cl.connect
-        #cl.auth 'bociankowo'
-        debug "auth #{base.config[:account_password]}"
+        debug "auth"
         cl.auth base.config[:account_password]
-      #rescue Jabber::ClientAuthenticationFailure => ex
-      # XXX
+        # XXX proper exception types (including Jabber::ClientAuthenticationFailure)
       rescue Exception => ex        
         @base.auth_failure        
       end
       
-        
-      #cl.auth 'mrthnwrds7'
-      #cl.auth 'spoczko'
-      
-      
+      @roster = Jabber::Roster::Helper.new cl              
+      @roster.add_presence_callback do |item,oldpres,pres|
+        pres = Jabber::Presence.new unless pres
+        oldpres = Jabber::Presence.new unless oldpres            
+        status = pres.status.to_s
+        presence = pres.show || :available
+        jid = item.jid
+        # XXX unavaliable
+        presence = :unavailable if pres.status.to_s == 'unavailable'
+        debug "item #{jid} chaged presence to #{presence} status #{status}"
+        base.item_presence_change(jid.to_s,presence,status)
+      end
           
-      
-
-    @roster = Jabber::Roster::Helper.new cl
-              
-    @roster.add_presence_callback do |item,oldpres,pres|
-      pres = Jabber::Presence.new unless pres
-      oldpres = Jabber::Presence.new unless oldpres
-
-            
-      #base.debug "presence change: #{pres.from} : #{pres.type.inspect }: #{pres.status.to_s}"     
-      #base.debug "mmmmmmmm #{pres.show} ===== #{pres.priority} <"     
-      #pres = oldpres
-      #base.debug "OLD presence change: #{pres.from} : #{pres.type.inspect} #{pres.status.to_s}"     
-      #base.debug "OLD mmmmmmmm #{pres.show} (#{pres.show.class}) ===== #{pres.priority} <"     
-            
-      status = pres.status.to_s
-      presence = pres.show || :available
-      jid = item.jid
-      # XXX unavaliable
-      presence = :unavailable if pres.status.to_s == 'unavailable'
-      debug "item #{jid} chaged presence to #{presence} status #{status}"
-      base.item_presence_change(jid.to_s,presence,status)
-    end
-          
-    mainthread = Thread.current
+      mainthread = Thread.current
  
-    @roster.add_query_callback { |iq|
-      mainthread.wakeup
-    }
-    Thread.stop
-          items =  []
-          
-          @roster.groups.each { |group|
-            
-            @roster.find_by_group(group).each { |item|
-              contact = Base::Contact.new(item.jid.to_s, item.iname, :group => group)
-              Thread.new do
-              debug "- #{item.iname} (#{item.jid})"
-              vcard_hash = {}
-              begin
-                puts "getting vcard "
-                vcard = Jabber::Vcard::Helper.new(cl).get(item.jid.strip)
-                puts "don"
-                #pp vcard.fields
-                if vcard
-                  vcard.fields.each do |field|
-                    vcard_hash[field] = vcard[field]
-                  end
-                  contact,vcard = vcard_hash
-                else
-                  puts "no vcard for #{item.jid}"
+      @roster.add_query_callback { |iq|
+        mainthread.wakeup
+      }
+      Thread.stop
+      items =  []          
+      @roster.groups.each do |group|            
+        @roster.find_by_group(group).each do |item|
+          contact = Base::Contact.new(item.jid.to_s, item.iname, :group => group)
+          Thread.new do
+            debug "- #{item.iname} (#{item.jid})"
+            vcard_hash = {}
+            begin
+              puts "getting vcard #{item.jid} "
+              vcard = Jabber::Vcard::Helper.new(cl).get(item.jid.strip)
+              puts "get vcard for #{item.jid}"
+              if vcard
+                vcard.fields.each do |field|
+                  vcard_hash[field] = vcard[field]
                 end
-              rescue Exception => ex
-                pp ex
-                puts "Error while getting avatar"
+                contact.vcard = vcard_hash                
+                puts "got end set"
+                @base.update_roster_item contact
+              else
+                puts "no vcard for #{item.jid}"
               end
-              end
-              #items << {:name => item.iname, :jid => item.jid.to_s}
-              items << contact#, :vcard => vcard_hash)
-            }
+            rescue Exception => ex
+              pp ex
+              puts "Error while getting avatar"
+            end
+          end
+          items << contact#, :vcard => vcard_hash)
+        end
             
-            debug "\n"
-          }
+        debug "\n"
+      end
           
-          @base.roster_items = items
+      @base.roster_items = items
       
       puts "set presence"
       cl.send(Jabber::Presence.new)
@@ -129,21 +98,13 @@ module Onim
         end
       end
       Thread.stop
-      #pp @roster.items
-      cl.send(Presence.new.set_type(:available))
 
-      rescue Exception => e
-        #puts e
-        #puts e.backtrace
-        debug "EXCEPTION !!! [#{e.class}] #{e}"
-        debug e.backtrace
-      end
-      #end
+      cl.send(Presence.new.set_type(:available))
     end
     
     protected
-      def debug(text)
-        base.debug("Engine: #{text}")
-      end
+    def debug(text)
+      base.debug("Engine: #{text}")
+    end
   end
 end

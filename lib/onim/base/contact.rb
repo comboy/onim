@@ -3,8 +3,7 @@ require 'base64'
 
 module Onim
   class Base
-    class Contact
-      
+    class Contact      
       class Resource
         
         attr_accessor :name
@@ -34,8 +33,14 @@ module Onim
         @jid.split('/')[0]            
       end
       
-      def vcard=(vcard)
-        puts "vcard ==="
+      def vcard=(vcard)        
+        @vcard = vcard
+        if @vcard["PHOTO/TYPE"] && @vcard["PHOTO/BINVAL"]
+           @image_file = File.open(File.join(Onim.conf_dir,'avatars_cache',@jid),'w')
+           @image_file.write Base64.decode64(@vcard["PHOTO/BINVAL"])
+           @image_file.close
+           puts "photo saved to #{@image_file.path}"           
+        end
       end
       
       def image_file
@@ -70,8 +75,6 @@ module Onim
           ''                
       end
       
-    end
-    
-    
-  end
-end
+    end # Contact
+  end # Base
+end # Onum

@@ -1,6 +1,7 @@
 # $Id$
 
 require 'pp'
+require 'fileutils'
 
 # Equivalent to a header guard in C/C++
 # Used to prevent the class/module from being loaded more than once
@@ -54,11 +55,17 @@ module Onim
   def self.conf_dir
     File.expand_path('~/.onim')
   end
+  
+  def self.prepare
+    FileUtils.mkdir_p conf_dir
+    FileUtils.mkdir_p File.join(conf_dir,'avatars_cache')    
+  end
 
 
 end  # module Onim
 
 Onim.require_all_libs_relative_to __FILE__
+Onim.prepare
 
 end  # unless defined?
 
