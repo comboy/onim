@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE glade-interface SYSTEM "glade-2.0.dtd">
-<!--Generated with glade3 3.4.5 on Sun Dec  7 01:16:27 2008 -->
+<!--Generated with glade3 3.4.5 on Sat Dec 13 14:07:31 2008 -->
 <glade-interface>
   <widget class="GtkWindow" id="window_message">
     <child>
@@ -153,22 +153,23 @@
                   <widget class="GtkHBox" id="hbox2">
                     <property name="visible">True</property>
                     <child>
-                      <widget class="GtkImage" id="image1">
+                      <widget class="GtkImage" id="image_avatar">
                         <property name="visible">True</property>
                         <property name="stock">gtk-missing-image</property>
                       </widget>
+                      <packing>
+                        <property name="expand">False</property>
+                      </packing>
                     </child>
                     <child>
-                      <widget class="GtkLabel" id="label1">
+                      <widget class="GtkTextView" id="textview_description">
                         <property name="visible">True</property>
-                        <property name="label" translatable="yes">label</property>
+                        <property name="editable">False</property>
+                        <property name="cursor_visible">False</property>
                       </widget>
                       <packing>
                         <property name="position">1</property>
                       </packing>
-                    </child>
-                    <child>
-                      <placeholder/>
                     </child>
                   </widget>
                 </child>
@@ -185,20 +186,13 @@
                 </child>
                 <child>
                   <widget class="GtkHBox" id="hbox1">
+                    <property name="height_request">30</property>
                     <property name="visible">True</property>
                     <child>
-                      <widget class="GtkButton" id="button1">
-                        <property name="width_request">30</property>
-                        <property name="height_request">30</property>
+                      <widget class="GtkToolbar" id="toolbar1">
                         <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="receives_default">True</property>
-                        <property name="label" translatable="yes">button</property>
-                        <property name="response_id">0</property>
+                        <property name="icon_size">GTK_ICON_SIZE_SMALL_TOOLBAR</property>
                       </widget>
-                      <packing>
-                        <property name="fill">False</property>
-                      </packing>
                     </child>
                     <child>
                       <placeholder/>
