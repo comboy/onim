@@ -42,9 +42,11 @@ module Onim
       #pp @contacts.style_properties
      # @contacts.enable_grid_lines = Gtk::TreeView::GridLines::BOTH
       @contacts.signal_connect('row-activated') { 
-        |view,path,column| contact_click @contacts.model.get_iter(path)[0]
-        
+        |view,path,column| contact_click @contacts.model.get_iter(path)[0]        
       }
+      
+      @glade['menuitem_account'].signal_connect('activate') { Gui::Account.new @base }     
+
       
       # Load status select
       @status_select = @glade['combobox_status']
@@ -101,18 +103,7 @@ module Onim
       debug "add msg"
       window.add_message(text)
     end
-    
-#    def item_presence_change(jid,presence,status)
-#      debug "item presence changing for #{jid}"
-#      # FIXME
-#      jid = jid.split("/n")[0]
-#      x = @contacts_rows[jid]
-#      fill_model_values_for_item item, x
-#      #@contacts_rows[jid].set_value(1,image_for_presence(presence))
-#      #@contacts_rows[jid].set_value(2,@contacts_rows[jid][2].split("\n")[0]+(status.to_s.chomp!= '' ? "\n<i>#{status}</i>" : ""))
-#      #@contacts_rows[jid].set_value(6,presence.to_s[0].chr+@contacts_rows[jid][4][1..-1])
-#    end
-    
+        
     def item_update(item)
       debug "item update"
       row = @contacts_rows[item.jid]

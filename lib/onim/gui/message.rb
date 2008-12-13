@@ -43,6 +43,12 @@ module Onim
           debug "message close"
           @window = nil
         end
+        
+        if @contact.has_image?
+          @glade['image_avatar'].pixbuf = Gdk::Pixbuf.new(@contact.image_file)
+        end
+        @desc = @glade['textview_description']
+        @desc.buffer.text = "<b>#{@contact.name}</b>\n\n#{@contact.status}"
         @nickname_tag = @talk.buffer.create_tag('nickname', 'weight' => Pango::FontDescription::WEIGHT_BOLD)
         @bla_tag = @input.buffer.create_tag('nickname', 'weight' => Pango::FontDescription::WEIGHT_BOLD)
          @input.buffer.insert @input.buffer.end_iter,"eooeu",@bla_tag

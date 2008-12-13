@@ -47,6 +47,10 @@ module Onim
         @image_file ? @image_file.path : nil
       end
       
+      def has_image?
+        !@image_file.nil?
+      end
+      
       def highest_resource
         # as for now just choose the random one
         @resources.empty? ?

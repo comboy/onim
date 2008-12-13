@@ -31,6 +31,8 @@ module Onim
         cl.auth base.config[:account_password]
         # XXX proper exception types (including Jabber::ClientAuthenticationFailure)
       rescue Exception => ex        
+        debug "EX: #{ex.class} "
+        debug ex.backtrace
         @base.auth_failure        
       end
       
