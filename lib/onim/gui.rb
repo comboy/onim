@@ -13,10 +13,16 @@ module Onim
       # Load main window
       @glade = GladeXML.new(Onim::PATH+'gui/main.glade', nil, 'window_main')      
       @main = @glade['window_main']
-      @main.set_default_size 200,500
-      @main.signal_connect("destroy") do  |window|
-        Gtk.main_quit
+      @main.signal_connect("size-allocate") do  |window,blah|
+        @window_size_x = blah.width
+        @window_size_y = blah.height
       end
+      @base.config[:main_window_size] ?
+        @main.set_default_size(*@base.config[:main_window_size]) :
+        @main.set_default_size(200,500)
+
+      @main.signal_connect("destroy") { quit }
+      @glade['menuitem_quit'].signal_connect('activate') { quit }
 
       # Load contacts lists and create columns
       @contacts = @glade['treeview_contacts']      
@@ -165,6 +171,13 @@ module Onim
         @contacts_rows[item.jid] = x
         fill_model_values_for_item item, x
 
+    end
+
+    def quit
+      debug "saving windows size #{@main.size}"
+      base.config[:main_window_size] = [@window_size_x, @window_size_y]
+      debug "saved as windows size #{@base.config[:main_window_size]}"
+      Gtk.main_quit
     end
     
     def debug(text)

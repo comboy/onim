@@ -16,6 +16,7 @@ module Onim
             base.config[:account_jid] = @glade['entry_jid'].text         
             base.config[:account_password] = @glade['entry_password'].text         
             base.connect if reconnect
+            @window.hide
           end
           @glade['button_cancel'].signal_connect('clicked') do
             @window.destroy         
