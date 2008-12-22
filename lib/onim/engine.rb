@@ -99,7 +99,7 @@ module Onim
       @client = cl
       begin
         debug "connect"
-        cl.connect
+        cl.connect 
         debug "auth"
         cl.auth base.config[:account_password]
         # XXX should catch only proper exception types (including Jabber::ClientAuthenticationFailure)

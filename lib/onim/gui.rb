@@ -146,6 +146,7 @@ module Onim
     def message_received(jid,text)
       debug "message received from #{jid}"
       window = message_window_for(jid)
+      window.window.show
       debug "add msg"
       window.add_message(text)
     end

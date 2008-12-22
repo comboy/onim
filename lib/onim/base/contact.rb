@@ -25,7 +25,7 @@ module Onim
       end
       
       attr_accessor :jid
-      attr_accessor :name    
+      attr_writer :name
       attr_accessor :group
 
       # Initilaziation
@@ -39,6 +39,15 @@ module Onim
       # Jid with resource stripped
       def pure_jid
         @jid.split('/')[0]            
+      end
+
+      def name
+        if @name && !@name.empty?
+          @name
+        elsif @vcard
+          @vcard['NICKNAME']
+        end
+
       end
 
       # Set vcard for given contact

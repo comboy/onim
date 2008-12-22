@@ -10,16 +10,21 @@ module Onim
         @contact = contact        
         create_window
       end
-      
+
+
+      # Appends message to chat
       def add_message(text,name=nil)
         debug "add message"
         puts "WWWTHUNHEOUTSN"
         puts @glade['scrolledwindow1'].hadjustment.value
         puts @glade['scrolledwindow1'].hadjustment.upper
+        puts @glade['scrolledwindow1'].hadjustment.lower
         @talk.buffer.insert  @talk.buffer.end_iter,"#{name || @contact.name}:  ", @nickname_tag
         @talk.buffer.insert  @talk.buffer.end_iter, "#{text}\n"
       end
-      
+
+
+      # Returns handle to message window
       def window
         @window || create_window
       end
@@ -37,6 +42,7 @@ module Onim
         @window.show
         @talk = @glade['textview_talk']
         @input = @glade['textview_input']
+        @glade['toolbutton_clear'].signal_connect('clicked') { @talk.buffer.text = ''}
         @input.signal_connect('key-press-event') do |textview,event|
           if event.keyval == Gdk::Keyval::GDK_Return
             send_message
@@ -48,13 +54,13 @@ module Onim
         end
         
         if @contact.has_image?
-          @glade['image_avatar'].pixbuf = Gdk::Pixbuf.new(@contact.image_file)
+          @glade['image_avatar'].pixbuf = Gdk::Pixbuf.new(@contact.image_file,30,30)
         end
         @desc = @glade['label_description']
-        @desc.markup = "<b>#{@contact.name}</b>\n\n#{@contact.status}"
+        @desc.markup = "<b>#{@contact.name}</b>#{(@contact.status && !@contact.status.empty?) ? "\n\n#{@contact.status}" : ''}"
         @nickname_tag = @talk.buffer.create_tag('nickname', 'weight' => Pango::FontDescription::WEIGHT_BOLD)
         @bla_tag = @input.buffer.create_tag('nickname', 'weight' => Pango::FontDescription::WEIGHT_BOLD)
-         @input.buffer.insert @input.buffer.end_iter,"eooeu",@bla_tag
+         #@input.buffer.insert @input.buffer.end_iter,"eooeu",@bla_tag
     
         @window
       end

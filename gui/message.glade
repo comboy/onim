@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE glade-interface SYSTEM "glade-2.0.dtd">
-<!--Generated with glade3 3.4.5 on Sat Dec 13 14:07:31 2008 -->
+<!--Generated with glade3 3.4.5 on Mon Dec 22 21:25:01 2008 -->
 <glade-interface>
   <widget class="GtkWindow" id="window_message">
     <child>
@@ -12,41 +12,16 @@
             <child>
               <widget class="GtkMenuItem" id="menuitem1">
                 <property name="visible">True</property>
-                <property name="label" translatable="yes">_Plik</property>
+                <property name="label" translatable="yes">_Rozmowa</property>
                 <property name="use_underline">True</property>
                 <child>
                   <widget class="GtkMenu" id="menu1">
                     <property name="visible">True</property>
                     <child>
-                      <widget class="GtkImageMenuItem" id="imagemenuitem1">
+                      <widget class="GtkMenuItem" id="imagemenuitem1">
                         <property name="visible">True</property>
                         <property name="label" translatable="yes">gtk-new</property>
                         <property name="use_underline">True</property>
-                        <property name="use_stock">True</property>
-                      </widget>
-                    </child>
-                    <child>
-                      <widget class="GtkImageMenuItem" id="imagemenuitem2">
-                        <property name="visible">True</property>
-                        <property name="label" translatable="yes">gtk-open</property>
-                        <property name="use_underline">True</property>
-                        <property name="use_stock">True</property>
-                      </widget>
-                    </child>
-                    <child>
-                      <widget class="GtkImageMenuItem" id="imagemenuitem3">
-                        <property name="visible">True</property>
-                        <property name="label" translatable="yes">gtk-save</property>
-                        <property name="use_underline">True</property>
-                        <property name="use_stock">True</property>
-                      </widget>
-                    </child>
-                    <child>
-                      <widget class="GtkImageMenuItem" id="imagemenuitem4">
-                        <property name="visible">True</property>
-                        <property name="label" translatable="yes">gtk-save-as</property>
-                        <property name="use_underline">True</property>
-                        <property name="use_stock">True</property>
                       </widget>
                     </child>
                     <child>
@@ -55,82 +30,10 @@
                       </widget>
                     </child>
                     <child>
-                      <widget class="GtkImageMenuItem" id="imagemenuitem5">
+                      <widget class="GtkMenuItem" id="menuitem_close">
                         <property name="visible">True</property>
-                        <property name="label" translatable="yes">gtk-quit</property>
+                        <property name="label" translatable="yes">_Zamknij</property>
                         <property name="use_underline">True</property>
-                        <property name="use_stock">True</property>
-                      </widget>
-                    </child>
-                  </widget>
-                </child>
-              </widget>
-            </child>
-            <child>
-              <widget class="GtkMenuItem" id="menuitem2">
-                <property name="visible">True</property>
-                <property name="label" translatable="yes">_Edycja</property>
-                <property name="use_underline">True</property>
-                <child>
-                  <widget class="GtkMenu" id="menu2">
-                    <property name="visible">True</property>
-                    <child>
-                      <widget class="GtkImageMenuItem" id="imagemenuitem6">
-                        <property name="visible">True</property>
-                        <property name="label" translatable="yes">gtk-cut</property>
-                        <property name="use_underline">True</property>
-                        <property name="use_stock">True</property>
-                      </widget>
-                    </child>
-                    <child>
-                      <widget class="GtkImageMenuItem" id="imagemenuitem7">
-                        <property name="visible">True</property>
-                        <property name="label" translatable="yes">gtk-copy</property>
-                        <property name="use_underline">True</property>
-                        <property name="use_stock">True</property>
-                      </widget>
-                    </child>
-                    <child>
-                      <widget class="GtkImageMenuItem" id="imagemenuitem8">
-                        <property name="visible">True</property>
-                        <property name="label" translatable="yes">gtk-paste</property>
-                        <property name="use_underline">True</property>
-                        <property name="use_stock">True</property>
-                      </widget>
-                    </child>
-                    <child>
-                      <widget class="GtkImageMenuItem" id="imagemenuitem9">
-                        <property name="visible">True</property>
-                        <property name="label" translatable="yes">gtk-delete</property>
-                        <property name="use_underline">True</property>
-                        <property name="use_stock">True</property>
-                      </widget>
-                    </child>
-                  </widget>
-                </child>
-              </widget>
-            </child>
-            <child>
-              <widget class="GtkMenuItem" id="menuitem3">
-                <property name="visible">True</property>
-                <property name="label" translatable="yes">_Widok</property>
-                <property name="use_underline">True</property>
-              </widget>
-            </child>
-            <child>
-              <widget class="GtkMenuItem" id="menuitem4">
-                <property name="visible">True</property>
-                <property name="label" translatable="yes">Pomo_c</property>
-                <property name="use_underline">True</property>
-                <child>
-                  <widget class="GtkMenu" id="menu3">
-                    <property name="visible">True</property>
-                    <child>
-                      <widget class="GtkImageMenuItem" id="imagemenuitem10">
-                        <property name="visible">True</property>
-                        <property name="label" translatable="yes">gtk-about</property>
-                        <property name="use_underline">True</property>
-                        <property name="use_stock">True</property>
                       </widget>
                     </child>
                   </widget>
@@ -155,17 +58,16 @@
                     <child>
                       <widget class="GtkImage" id="image_avatar">
                         <property name="visible">True</property>
-                        <property name="stock">gtk-missing-image</property>
+                        <property name="stock">gtk-orientation-portrait</property>
                       </widget>
                       <packing>
                         <property name="expand">False</property>
                       </packing>
                     </child>
                     <child>
-                      <widget class="GtkTextView" id="textview_description">
+                      <widget class="GtkLabel" id="label_description">
                         <property name="visible">True</property>
-                        <property name="editable">False</property>
-                        <property name="cursor_visible">False</property>
+                        <property name="label" translatable="yes">label</property>
                       </widget>
                       <packing>
                         <property name="position">1</property>
@@ -174,34 +76,38 @@
                   </widget>
                 </child>
                 <child>
-                  <widget class="GtkTextView" id="textview_talk">
+                  <widget class="GtkScrolledWindow" id="scrolledwindow1">
                     <property name="visible">True</property>
-                    <property name="editable">False</property>
-                    <property name="wrap_mode">GTK_WRAP_WORD</property>
-                    <property name="cursor_visible">False</property>
+                    <property name="can_focus">True</property>
+                    <property name="hscrollbar_policy">GTK_POLICY_AUTOMATIC</property>
+                    <property name="vscrollbar_policy">GTK_POLICY_AUTOMATIC</property>
+                    <property name="shadow_type">GTK_SHADOW_ETCHED_IN</property>
+                    <child>
+                      <widget class="GtkTextView" id="textview_talk">
+                        <property name="visible">True</property>
+                        <property name="editable">False</property>
+                        <property name="wrap_mode">GTK_WRAP_WORD</property>
+                        <property name="cursor_visible">False</property>
+                      </widget>
+                    </child>
                   </widget>
                   <packing>
                     <property name="position">1</property>
                   </packing>
                 </child>
                 <child>
-                  <widget class="GtkHBox" id="hbox1">
-                    <property name="height_request">30</property>
+                  <widget class="GtkToolbar" id="toolbar1">
                     <property name="visible">True</property>
+                    <property name="icon_size">GTK_ICON_SIZE_SMALL_TOOLBAR</property>
                     <child>
-                      <widget class="GtkToolbar" id="toolbar1">
+                      <widget class="GtkToolButton" id="toolbutton_clear">
                         <property name="visible">True</property>
-                        <property name="icon_size">GTK_ICON_SIZE_SMALL_TOOLBAR</property>
+                        <property name="label" translatable="yes">Wyczyść</property>
+                        <property name="stock_id">gtk-clear</property>
                       </widget>
-                    </child>
-                    <child>
-                      <placeholder/>
-                    </child>
-                    <child>
-                      <placeholder/>
-                    </child>
-                    <child>
-                      <placeholder/>
+                      <packing>
+                        <property name="expand">False</property>
+                      </packing>
                     </child>
                   </widget>
                   <packing>

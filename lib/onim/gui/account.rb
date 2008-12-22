@@ -13,8 +13,10 @@ module Onim
           @glade['entry_password'].text = base.config[:account_password]  || ''
 
           @glade['button_save'].signal_connect('clicked') do
-            base.config[:account_jid] = @glade['entry_jid'].text         
-            base.config[:account_password] = @glade['entry_password'].text         
+            if @glade['checkbutton_remember'].active?
+              base.config[:account_jid] = @glade['entry_jid'].text
+              base.config[:account_password] = @glade['entry_password'].text
+            end
             base.connect if reconnect
             @window.hide
           end
