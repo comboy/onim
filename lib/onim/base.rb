@@ -34,7 +34,7 @@ module Onim
       strip_jid jid
       @gui.message_received jid, text
     end
-    
+
     def send_message(jid,text)
       @engine.send_message jid,text
     end

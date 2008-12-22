@@ -3,7 +3,13 @@ require 'base64'
 
 module Onim
   class Base
-    class Contact      
+
+    # Class represening single contact on the roster used to pass info about
+    # contacts between engine. base and gui
+    class Contact
+
+      # Represents resource for given contact
+      # Contact can has many resources
       class Resource
         
         attr_accessor :name
@@ -22,6 +28,7 @@ module Onim
       attr_accessor :name    
       attr_accessor :group
 
+      # Initilaziation
       def initialize(jid,name,options={})
         @name = name
         @jid = jid       
@@ -29,10 +36,13 @@ module Onim
         @resources = {}
       end
 
+      # Jid with resource stripped
       def pure_jid
         @jid.split('/')[0]            
       end
-      
+
+      # Set vcard for given contact
+      # Method alse decodes avatar and saves it to the disk
       def vcard=(vcard)        
         @vcard = vcard
         if @vcard["PHOTO/TYPE"] && @vcard["PHOTO/BINVAL"]
@@ -42,22 +52,26 @@ module Onim
            puts "photo saved to #{@image_file.path}"           
         end
       end
-      
+
+      # Returns path to avatar saved on disk (if any)
       def image_file
         @image_file ? @image_file.path : nil
       end
-      
+
+      # true if contact has an avatar
       def has_image?
         !@image_file.nil?
       end
-      
+
+      # Choose resorce with highest priority
       def highest_resource
         # as for now just choose the random one
         @resources.empty? ?
           nil :
           @resources.find { true }[1]
       end
-      
+
+      # Updates resource presence
       def update_presence(resource,presence,status)
         if res = @resources[resource]
           res.presence = presence
@@ -66,13 +80,15 @@ module Onim
           @resources[resource] = Resource.new resource, presence, status
         end
       end
-      
+
+      # Returns symbol with current presence name
       def presence
         highest_resource ?
           highest_resource.presence :
           :unavailable        
       end
-      
+
+      # Status of the cantact
       def status
         highest_resource ?
           highest_resource.status :

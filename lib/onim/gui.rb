@@ -50,12 +50,19 @@ module Onim
       
       # Load status select
       @status_select = @glade['combobox_status']
+      @status_select.signal_connect('changed') do
+        puts @status_select.active_iter
+        # FIXME Yuck !
+        presence = status_list[@status_select.active_iter.to_s.to_i][1]
+        puts presence
+        @base.set_presence presence, ''
+      end
 #      renderer = Gtk::CellRendererText.new
 #      @status_select.append_column(Gtk::TreeViewColumn.new('wow', renderer, :text => 0))
       available_statuses = Gtk::TreeStore.new(String)      
-      %w{Dostępny Zajęty Niedostępny}.each do |item|
+      status_list.each do |item|
         x = available_statuses.append nil
-        x.set_value(0,item)
+        x.set_value(0,item[0])
       end
       @status_select.model = available_statuses
       @status_select.set_active 0
@@ -146,7 +153,8 @@ module Onim
       
       contacts_model.set_sort_column_id(6)
       @contacts.model = contacts_model
-      #@contacts.expand_all
+
+      @contacts.expand_all
     end
     
     def debug(text)
@@ -181,6 +189,16 @@ module Onim
         else 'person.png'
         end      
         Gdk::Pixbuf.new(Onim::PATH+'gui/images/status/'+image)
+    end
+
+    def status_list
+      [
+        ['Dostępny',:available],
+        ['Zajęty', :dnd],
+        ['Zaraz wracam', :away],
+        ['Wrócę póżnej', :xa],
+        ['Niedostępny', :unavailable]
+      ]
     end
   end
 end
