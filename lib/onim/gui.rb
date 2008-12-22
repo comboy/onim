@@ -6,7 +6,7 @@ module Onim
   class Gui
     
     attr_accessor :base
-
+    attr_accessor :hide_offline
     
     def initialize(base)            
       @base = base
@@ -71,6 +71,11 @@ module Onim
       
       @glade['menuitem_account'].signal_connect('activate') { Gui::Account.new @base }     
       @glade['menuitem_about'].signal_connect('activate') { show_about }
+      @glade['menuitem_showoffline'].signal_connect('activate') { 
+        @hide_offline = !@glade['menuitem_showoffline'].active?
+        puts "wott"
+        reload_items
+      }
 
       
       # Load status select
@@ -155,9 +160,16 @@ module Onim
     def item_update(item)
       debug "item update"
       row = @contacts_rows[item.jid]
+      unless row
+        add_item_to_roster(item)
+        row = @contacts_rows[item.jid]
+      end
       fill_model_values_for_item item, row
     end
 
+    def reload_items
+      set_roster_items @base.roster.contacts
+    end
     # Initialize roster list
     def set_roster_items(items)
       @contacts_rows = {}      
@@ -165,7 +177,7 @@ module Onim
       @groups_rows = {}
       items.each do |item|        
         item.group = 'dupa' unless item.group
-        add_item_to_roster(item)
+        add_item_to_roster(item) unless @hide_offline && item.presence == :unavailable
       end      
       @contacts_model.set_sort_column_id(6)
       @contacts.model = @contacts_model
