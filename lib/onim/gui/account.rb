@@ -1,5 +1,7 @@
 module Onim
   class Gui
+
+    # Account configuration window
     class Account      
         attr_accessor :base
       

@@ -13,6 +13,9 @@ module Onim
       
       def add_message(text,name=nil)
         debug "add message"
+        puts "WWWTHUNHEOUTSN"
+        puts @glade['scrolledwindow1'].hadjustment.value
+        puts @glade['scrolledwindow1'].hadjustment.upper
         @talk.buffer.insert  @talk.buffer.end_iter,"#{name || @contact.name}:  ", @nickname_tag
         @talk.buffer.insert  @talk.buffer.end_iter, "#{text}\n"
       end
@@ -47,8 +50,8 @@ module Onim
         if @contact.has_image?
           @glade['image_avatar'].pixbuf = Gdk::Pixbuf.new(@contact.image_file)
         end
-        @desc = @glade['textview_description']
-        @desc.buffer.text = "<b>#{@contact.name}</b>\n\n#{@contact.status}"
+        @desc = @glade['label_description']
+        @desc.markup = "<b>#{@contact.name}</b>\n\n#{@contact.status}"
         @nickname_tag = @talk.buffer.create_tag('nickname', 'weight' => Pango::FontDescription::WEIGHT_BOLD)
         @bla_tag = @input.buffer.create_tag('nickname', 'weight' => Pango::FontDescription::WEIGHT_BOLD)
          @input.buffer.insert @input.buffer.end_iter,"eooeu",@bla_tag

@@ -46,6 +46,7 @@ module Onim
       }
       
       @glade['menuitem_account'].signal_connect('activate') { Gui::Account.new @base }     
+      @glade['menuitem_about'].signal_connect('activate') { show_about }
 
       
       # Load status select
@@ -79,7 +80,12 @@ module Onim
       dialog.run
       dialog.destroy
     end
-    
+
+
+    def show_about
+      About.new self
+    end
+
     def show_account_configuration
       bla = Account.new @base
       puts "done #{bla}"
@@ -120,16 +126,27 @@ module Onim
     def set_roster_items(items)
       @contacts_rows = {}
       
-      contacts_model = Gtk::TreeStore.new(Hash,Gdk::Pixbuf,String,Gdk::Color,String,Gdk::Pixbuf,String)
+      @contacts_model = Gtk::TreeStore.new(Hash,Gdk::Pixbuf,String,Gdk::Color,String,Gdk::Pixbuf,String)
       #items = [{:name => 'ueoau', :jid => 'ueoueo'},{:name => 'ueoa', :jid => 'euooeu'}]
       @groups_rows = {}
       items.each do |item|        
         item.group = 'dupa' unless item.group
-        if item.group
+        add_item_to_roster(item)
+
+      end
+      
+      @contacts_model.set_sort_column_id(6)
+      @contacts.model = @contacts_model
+
+      @contacts.expand_all
+    end
+
+    def add_item_to_roster(item)
+      if item.group
           if @groups_rows[item.group]
             parent = @groups_rows[item.group]
-          else            
-            parent = contacts_model.append nil
+          else
+            parent = @contacts_model.append nil
             parent.set_value(0,nil)
             parent.set_value(1,nil)
             parent.set_value(2,item.group)
@@ -143,18 +160,11 @@ module Onim
         else
           parent = nil
         end
-        
-        x = contacts_model.append parent
+
+        x = @contacts_model.append parent
         @contacts_rows[item.jid] = x
         fill_model_values_for_item item, x
 
-
-      end
-      
-      contacts_model.set_sort_column_id(6)
-      @contacts.model = contacts_model
-
-      @contacts.expand_all
     end
     
     def debug(text)

@@ -10,8 +10,6 @@ module Onim
       @roster = Roster.new
       @engine = Engine.new self
       @gui = Gui.new self
-#      @gui.show_error "ueonth"
-     # @account = Gui::Account.new self
       
       Thread.new do 
         @engine.connect
@@ -30,9 +28,8 @@ module Onim
     
     def message_received(jid,text)
       puts "base: message received"
-      # XXX like this it's not possible for gui to tell which resorce sent it
-      strip_jid jid
-      @gui.message_received jid, text
+      # XXX like this it's not possible for gui to tell which resorce sent it      
+      @gui.message_received strip_jid(jid), text
     end
 
     def send_message(jid,text)

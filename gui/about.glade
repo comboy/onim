@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE glade-interface SYSTEM "glade-2.0.dtd">
+<!--Generated with glade3 3.4.5 on Mon Dec 22 17:34:50 2008 -->
+<glade-interface>
+  <widget class="GtkWindow" id="window_about">
+    <property name="width_request">400</property>
+    <property name="height_request">200</property>
+    <property name="title" translatable="yes">ONIM - o nim :)</property>
+    <property name="resizable">False</property>
+    <property name="modal">True</property>
+    <child>
+      <widget class="GtkFixed" id="fixed1">
+        <property name="visible">True</property>
+        <child>
+          <widget class="GtkLabel" id="label1">
+            <property name="width_request">240</property>
+            <property name="height_request">84</property>
+            <property name="visible">True</property>
+            <property name="label" translatable="yes">&lt;span size="xx-large"&gt;&lt;b&gt;ONIM&lt;/b&gt;&lt;/span&gt;
+One Night Instant Mess&lt;span color="gray"&gt;enger&lt;/span&gt;
+
+Autor: &lt;i&gt;Kacper Cieśla&lt;/i&gt;</property>
+            <property name="use_markup">True</property>
+            <property name="justify">GTK_JUSTIFY_CENTER</property>
+          </widget>
+          <packing>
+            <property name="x">160</property>
+            <property name="y">23</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="GtkButton" id="button_ok">
+            <property name="width_request">136</property>
+            <property name="height_request">32</property>
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
+            <property name="label" translatable="yes">Podoba mi się</property>
+            <property name="response_id">0</property>
+          </widget>
+          <packing>
+            <property name="x">206</property>
+            <property name="y">134</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="GtkImage" id="image_about">
+            <property name="width_request">153</property>
+            <property name="height_request">159</property>
+            <property name="visible">True</property>
+            <property name="pixbuf">about.gif</property>
+          </widget>
+          <packing>
+            <property name="x">7</property>
+            <property name="y">21</property>
+          </packing>
+        </child>
+      </widget>
+    </child>
+  </widget>
+</glade-interface>
