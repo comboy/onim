@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE glade-interface SYSTEM "glade-2.0.dtd">
-<!--Generated with glade3 3.4.5 on Sun Dec  7 22:22:14 2008 -->
+<!--Generated with glade3 3.4.5 on Mon Dec 22 20:06:33 2008 -->
 <glade-interface>
   <widget class="GtkWindow" id="window_main">
     <child>
@@ -18,18 +18,12 @@
                   <widget class="GtkMenu" id="menu1">
                     <property name="visible">True</property>
                     <child>
-                      <widget class="GtkImageMenuItem" id="imagemenuitem1">
+                      <widget class="GtkImageMenuItem" id="menuitem_account">
                         <property name="visible">True</property>
+                        <property name="tooltip" translatable="yes">Ustawienia konta</property>
                         <property name="label" translatable="yes">gtk-preferences</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
-                      </widget>
-                    </child>
-                    <child>
-                      <widget class="GtkMenuItem" id="menuitem_account">
-                        <property name="visible">True</property>
-                        <property name="label" translatable="yes">_Konto</property>
-                        <property name="use_underline">True</property>
                       </widget>
                     </child>
                     <child>
@@ -38,7 +32,7 @@
                       </widget>
                     </child>
                     <child>
-                      <widget class="GtkImageMenuItem" id="imagemenuitem5">
+                      <widget class="GtkImageMenuItem" id="menuitem_quit">
                         <property name="visible">True</property>
                         <property name="label" translatable="yes">gtk-quit</property>
                         <property name="use_underline">True</property>
@@ -58,7 +52,7 @@
                   <widget class="GtkMenu" id="menu2">
                     <property name="visible">True</property>
                     <child>
-                      <widget class="GtkCheckMenuItem" id="menuitem5">
+                      <widget class="GtkCheckMenuItem" id="menuitem_showoffline">
                         <property name="visible">True</property>
                         <property name="label" translatable="yes">Pokazuj nieobecnych</property>
                         <property name="use_underline">True</property>
@@ -77,7 +71,7 @@
                   <widget class="GtkMenu" id="menu3">
                     <property name="visible">True</property>
                     <child>
-                      <widget class="GtkImageMenuItem" id="imagemenuitem10">
+                      <widget class="GtkImageMenuItem" id="menuitem_about">
                         <property name="visible">True</property>
                         <property name="label" translatable="yes">gtk-about</property>
                         <property name="use_underline">True</property>
@@ -113,12 +107,30 @@
           </packing>
         </child>
         <child>
-          <widget class="GtkComboBox" id="combobox_status">
-            <property name="height_request">30</property>
+          <widget class="GtkHBox" id="hbox1">
             <property name="visible">True</property>
-            <property name="items" translatable="yes">Dostępny
+            <child>
+              <widget class="GtkImage" id="image_presence">
+                <property name="width_request">16</property>
+                <property name="visible">True</property>
+                <property name="stock">gtk-missing-image</property>
+              </widget>
+              <packing>
+                <property name="expand">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="GtkComboBox" id="combobox_status">
+                <property name="height_request">30</property>
+                <property name="visible">True</property>
+                <property name="items" translatable="yes">Dostępny
 Zajęty
 Niedostępni</property>
+              </widget>
+              <packing>
+                <property name="position">1</property>
+              </packing>
+            </child>
           </widget>
           <packing>
             <property name="expand">False</property>

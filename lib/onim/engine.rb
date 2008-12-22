@@ -39,7 +39,10 @@ module Onim
     # status - status text
     def set_presence(presence=nil,status=nil)
       debug "setting presence to [#{presence}] : #{status}"
-      @client.send(Jabber::Presence.new(presence,status)) if connected?
+      if connected?
+        @client.send(Jabber::Presence.new(presence,status))
+        @base.presence_changed(presence,status)
+      end
     end
 
     # Fetch roster items from server, blocknig

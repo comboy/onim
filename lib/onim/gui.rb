@@ -6,6 +6,7 @@ module Onim
   class Gui
     
     attr_accessor :base
+
     
     def initialize(base)            
       @base = base
@@ -13,10 +14,27 @@ module Onim
       # Load main window
       @glade = GladeXML.new(Onim::PATH+'gui/main.glade', nil, 'window_main')      
       @main = @glade['window_main']
+
+      @icon = Gtk::StatusIcon.new
+      @icon.pixbuf = image_for_presence :unavailable
+
+        @icon.signal_connect('activate') do
+        if @main_hidden
+          @main.show
+          @main_hidden = false
+        else
+            @main.hide
+            @main_hidden = true
+        end
+        end
+    
+
       @main.signal_connect("size-allocate") do  |window,blah|
         @window_size_x = blah.width
         @window_size_y = blah.height
       end
+
+      @presence_image = @glade['image_presence']
       @base.config[:main_window_size] ?
         @main.set_default_size(*@base.config[:main_window_size]) :
         @main.set_default_size(200,500)
@@ -76,7 +94,9 @@ module Onim
       
       @message_windows = {}
     end
-    
+
+
+    # Displays error dialog
     def show_error(text)
       dialog = Gtk::MessageDialog.new(@window, 
           Gtk::Dialog::DESTROY_WITH_PARENT,
@@ -88,24 +108,30 @@ module Onim
     end
 
 
+    # Show about window
     def show_about
       About.new self
     end
 
+    # Show account configuration window
     def show_account_configuration
       bla = Account.new @base
       puts "done #{bla}"
     end
-    
+
+    # Show main window
     def show
       @main.show
       Gtk.main
     end
 
+    # Called on contacts list click
     def contact_click(contact)
       message_window_for(contact.jid).window
     end
-    
+
+    # Returns handle for window with chat for given jid
+    # creates window if it does not exist yet
     def message_window_for(jid)
       unless @message_windows[jid]
         debug "creating new message window"
@@ -115,38 +141,38 @@ module Onim
       end      
       @message_windows[jid]
     end
-    
+
+    # Called whenever new message is received
     def message_received(jid,text)
       debug "message received from #{jid}"
       window = message_window_for(jid)
       debug "add msg"
       window.add_message(text)
     end
-        
+
+    # Called whonever some contact's status is changing
     def item_update(item)
       debug "item update"
       row = @contacts_rows[item.jid]
       fill_model_values_for_item item, row
     end
-    
+
+    # Initialize roster list
     def set_roster_items(items)
-      @contacts_rows = {}
-      
+      @contacts_rows = {}      
       @contacts_model = Gtk::TreeStore.new(Hash,Gdk::Pixbuf,String,Gdk::Color,String,Gdk::Pixbuf,String)
-      #items = [{:name => 'ueoau', :jid => 'ueoueo'},{:name => 'ueoa', :jid => 'euooeu'}]
       @groups_rows = {}
       items.each do |item|        
         item.group = 'dupa' unless item.group
         add_item_to_roster(item)
-
-      end
-      
+      end      
       @contacts_model.set_sort_column_id(6)
       @contacts.model = @contacts_model
-
       @contacts.expand_all
     end
 
+    # Appends single item to roster in the correct group
+    # creates group if needed
     def add_item_to_roster(item)
       if item.group
           if @groups_rows[item.group]
@@ -173,6 +199,13 @@ module Onim
 
     end
 
+    # Called on self presence change
+    def presence_changed(presence,status)
+      @icon.pixbuf = image_for_presence presence
+      @presence_image.pixbuf = image_for_presence presence
+    end
+
+    # Quits the program
     def quit
       debug "saving windows size #{@main.size}"
       base.config[:main_window_size] = [@window_size_x, @window_size_y]
@@ -208,7 +241,7 @@ module Onim
         when :away then 'away.png'
         when :extended_away then 'extended-away.png'
         when :dnd then 'busy.png'
-        when :chat then 'chat.png'
+        when :chat then 'available.png'
         else 'person.png'
         end      
         Gdk::Pixbuf.new(Onim::PATH+'gui/images/status/'+image)
@@ -216,7 +249,7 @@ module Onim
 
     def status_list
       [
-        ['Dostępny',:available],
+        ['Dostępny',:chat],
         ['Zajęty', :dnd],
         ['Zaraz wracam', :away],
         ['Wrócę póżnej', :xa],
