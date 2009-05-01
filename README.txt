@@ -1,32 +1,21 @@
 onim
-    by FIXME (your name)
-    FIXME (url)
+    by Kacper Cieśla 
+    https://github.com/comboy/onim
 
 == DESCRIPTION:
 
-FIXME (describe your package)
+Very simple GTK jabber client I wrote as  To run it you'll need:
 
-== FEATURES/PROBLEMS:
+* rubygtk
+* xmmp4r
 
-* FIXME (list of features or problems)
-
-== SYNOPSIS:
-
-  FIXME (code sample of usage)
-
-== REQUIREMENTS:
-
-* FIXME (list of requirements)
-
-== INSTALL:
-
-* FIXME (sudo gem install, anything else)
+You can find some screenshot in doc/about_pl.pdf 
 
 == LICENSE:
 
 (The MIT License)
 
-Copyright (c) 2008 FIXME (different license?)
+Copyright (c) 2008 Kacper Cieśla
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
